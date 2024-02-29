@@ -1,0 +1,30 @@
+# docker-compose.yml
+version: '3'
+services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: data_base
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-d", "data_base", "-U", "admin"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  app:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    depends_on:
+      - postgres
+    ports:
+      - "3000:3000"
+    environment:
+      PGHOST: postgres
+      PGUSER: admin
+      PGPASSWORD: password
+      PGDATABASE: data_base
+      PGPORT: 5432
