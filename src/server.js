@@ -1,4 +1,6 @@
 const express = require('express');
+const exphbs = require('express-handlebars')
+const session = require('express-session')
 const { sequelize } = require('./database/connection');
 const Ad = require('./models/ad');
 const app = express();
@@ -7,6 +9,20 @@ const PORT = 3000;
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 
+const hbs = exphbs.create()
+
+app.engine('handlebrs', hbs.engine)
+app.set('view engine', 'handlebars')
+
+app.get('/', (req, res) => {
+  res.render('home', {
+    pgaeTtile: 'Title',
+    companyName: 'Company Name',
+    companyLogo: 'path/to/logo.png',
+    userControls: 'Login | Sign Up',
+    content: 'Content for home page'
+  })
+})
 
 app.post('/api/addAd', async (req, res) => {
   try {
@@ -61,13 +77,3 @@ const initializeApp = async () => {
 };
 
 initializeApp();
-
-// app.listen(PORT, async () => {
-//   console.log(`Server running on http://localhost:${PORT}`);
-//   try {
-//     await sequelize.authenticate();
-//     console.log('Connection to the database has been established successfully.');
-//   } catch (error) {
-//     console.error('Unable to connect to the database:', error.message);
-//   }
-// });
