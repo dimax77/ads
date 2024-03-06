@@ -1,12 +1,80 @@
 const express = require('express');
+const exphbs = require('express-handlebars')
+const session = require('express-session')
+const path = require('path')
 const { sequelize } = require('./database/connection');
 const Ad = require('./models/ad');
 const app = express();
 const PORT = 3000;
 
+// const hbs = exphbs.create({
+//   partialsDir: __dirname + '/views/partials'
+
+// })
+const hbs = exphbs.create({
+  extname: 'hbs',
+  // defaultLayout: 'base',
+  layoutsDir: path.join(__dirname, 'views/layouts'),
+  partialsDir: [
+    //  path to your partials
+    path.join(__dirname, 'views/partials'),
+  ]
+});
+console.log(hbs)
+console.log(hbs.content)
+console.log(hbs.layoutsDir)
+console.log(hbs.hbs)
+// hbs.registerPartials(__dirname + '/views/partials');
+app.engine('hbs', hbs.engine);
+app.set('view engine', 'hbs');
+
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
+app.use(session({
+  secret: 'your-secret-key',
+  resave: false,
+  saveUninitialized: true,
+}));
 
+app.get('/', (req, res) => {
+  console.log("Root route preccessing")
+  res.render('home', {
+    pageTitle: 'Home',
+    companyTitle: 'Your Company',
+    companyLogo: '/path/to/logo.png',
+    userControls: '<a href="/login">Login</a> | <a href="/signup">Sign Up</a>',
+        content: 'Content for home page...'
+  });
+});
+
+function authenticate(req, res, next) {
+  if (req.session && req.session.user) {
+    // User is authenticated, proceed to the next middleware or route handler
+    return next();
+  } else {
+    // User is not authenticated, redirect to login page
+    res.redirect('/login');
+  }
+}
+
+// Apply the authenticate middleware to routes that require authentication
+app.get('/dashboard', authenticate, (req, res) => {
+  res.render('dashboard', {
+    pageTitle: 'Dashboard',
+    // Other dashboard content...
+  });
+});
+
+// Example login route
+app.post('/login', (req, res) => {
+  // Authenticate user (check username/password)
+  const user = { username: 'exampleUser' };
+
+  // Store user information in the session
+  req.session.user = user;
+
+  res.redirect('/dashboard');
+});
 
 app.post('/api/addAd', async (req, res) => {
   try {

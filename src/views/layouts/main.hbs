@@ -1,0 +1,38 @@
+<!-- layout.handlebars -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ pageTitle }}</title>
+</head>
+
+<body>
+    <header>
+        <!-- Company title and logo -->
+        <h1>{{ companyTitle }}</h1>
+        <img src="{{ companyLogo }}" alt="Company Logo">
+
+        <!-- Login/Signup references -->
+        <div id="userControls">
+            {{ userControls }}
+        </div>
+    </header>
+
+    <nav>
+        <!-- Search field -->
+        <input type="text" id="search" name="search" placeholder="Search...">
+    </nav>
+
+    <main>
+        <!-- Content specific to each page -->
+        {{ content }}
+    </main>
+
+    <footer>
+        <!-- Footer content -->
+    </footer>
+</body>
+
+</html>
