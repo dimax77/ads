@@ -5,10 +5,11 @@ const { authenticate } = require('../middleware/authMiddleware')
 
 
 router.get('/dashboard', authenticate, (req, res) => {
+    console.log(req.session.user_id)
     res.render('dashboard', {
         layout: 'main',
         pageTitle: 'Dashboard',
-        user: req.user
+        user: req.session.user_id
     });
 });
 
