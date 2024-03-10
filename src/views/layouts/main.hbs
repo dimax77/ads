@@ -1,4 +1,4 @@
-<!-- layout.handlebars -->
+{{!-- main.hbs --}}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,33 +6,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ pageTitle }}</title>
+    <link rel="stylesheet" href="/public/vendor/bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/public/vendor/bower_components/bootstrap/dist/css/signin.css">
+    <link rel="stylesheet" href="/public/vendor/bower_components/bootstrap/dist/css/sign-in.css">
+    <script src="/public/vendor/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="/public/vendor/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 </head>
 
 <body>
-    <header>
-        <!-- Company title and logo -->
-        <h1>{{ companyTitle }}</h1>
-        <img src="{{ companyLogo }}" alt="Company Logo">
+    <section class="container">
+        {{> topNav}}
+        {{{body}}}
 
-        <!-- Login/Signup references -->
-        <div id="userControls">
-            {{ userControls }}
-        </div>
-    </header>
-
-    <nav>
-        <!-- Search field -->
-        <input type="text" id="search" name="search" placeholder="Search...">
-    </nav>
-
-    <main>
-        <!-- Content specific to each page -->
-        {{ content }}
-    </main>
-
-    <footer>
-        <!-- Footer content -->
-    </footer>
+    </section>
 </body>
+
 
 </html>

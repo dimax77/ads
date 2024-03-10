@@ -7,15 +7,15 @@ class User extends Model { }
 User.init(
     {
         id: {
-            type: DataTypes.INTEGER,
-            primaryKey: true,
-            autoIncrement: true,
+            type: DataTypes.UUID,
+            defaultValue: DataTypes.UUIDV4,
+            primaryKey: true
         },
-        username: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            unique: true,
-        },
+        // username: {
+        //     type: DataTypes.STRING,
+        //     allowNull: false,
+        //     unique: true,
+        // },
         password: {
             type: DataTypes.STRING,
             allowNull: false,
@@ -29,10 +29,10 @@ User.init(
             allowNull: true, // Set to false if email is required
             unique: true,
         },
-        dateOfBirth: {
-            type: DataTypes.DATE,
-            allowNull: true,
-        },
+        // dateOfBirth: {
+        //     type: DataTypes.DATE,
+        //     allowNull: true,
+        // },
         role: {
             type: DataTypes.STRING,
             allowNull: false,

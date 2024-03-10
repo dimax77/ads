@@ -1,0 +1,27 @@
+<form id="registrationForm" action="/register" method="post" onsubmit="return validateForm()">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required>
+    <br>
+
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" required>
+    <br>
+
+    <label for="repeatPassword">Repeat Password</label>
+    <input type="password" id="repeatPassword" name="repeatPassword" required>
+    <br>
+
+    <button type="submit">Register</button>
+</form>
+
+<script>
+    function validateForm() {
+        var password = document.getElementById("password").value;
+        var repeatPassword = document.getElementById("repeatPassword").value;
+        if (password != repeatPassword) {
+            alert("Passwords does not match");
+            return false;
+        }
+        return true;
+    }
+</script>

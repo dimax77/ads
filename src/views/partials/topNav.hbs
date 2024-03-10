@@ -1,0 +1,17 @@
+{{!-- topNav.hbs --}}
+<nav class="navbar navbar-default" role="navigation">
+    <ul class="nav navbar-nav">
+        <li><a href="/">Главная</a></li>
+    </ul>
+    {{#if user}}
+    <ul class="nav navbar-nav navbar-right">
+        <li><a href="/dashboard">{{user.username}}</a></li>
+        <li><a href="/logout">Log Out</a></li>
+    </ul>
+    {{else}}
+    <ul class="nav navbar-nav navbar-right">
+        <a href="/login">Log In</a>
+    </ul>
+    {{/if}}
+
+</nav>

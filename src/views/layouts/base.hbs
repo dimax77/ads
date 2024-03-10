@@ -1,0 +1,46 @@
+<!-- layout.handlebars -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ pageTitle }}</title>
+    <link rel="stylesheet" href="/public/vendor/bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <script src="/public/vendor/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="/public/vendor/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <section class="container">
+{{> topNav}}
+    </section>
+    <header>
+        <!-- Company title and logo -->
+        <h1>{{ companyTitle }}</h1>
+        <img src="{{ companyLogo }}" alt="Company Logo">
+
+        <!-- Login/Signup references -->
+        <div id="userControls">
+            {{!-- {{ userControls }} --}}
+        </div>
+    </header>
+
+    <nav>
+        {{!-- {{> userControls}} --}}
+        <!-- Search field -->
+        <input type="text" id="search" name="search" placeholder="Search...">
+    </nav>
+
+    <main>
+        <!-- Content specific to each page -->
+        {{ content }}
+    </main>
+
+    <footer>
+        <!-- Footer content -->
+    </footer>
+    {{{body}}}
+</body>
+
+</html>

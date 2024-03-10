@@ -1,105 +1,80 @@
+// Server.js
 const express = require('express');
-const exphbs = require('express-handlebars')
-const session = require('express-session')
-const path = require('path')
+const exphbs = require('express-handlebars');
+
+const session = require('express-session');
+const SequelizeStore = require('connect-session-sequelize')(session.Store);
 const { sequelize } = require('./database/connection');
-const Ad = require('./models/ad');
+
+const path = require('path');
+
+const adRoutes = require('./routes/adRoutes');
+const authRoutes = require('./routes/authRoutes');
+const homeRoutes = require('./routes/homeRoutes');
+const loginRoutes = require('./routes/loginRoutes');
+const { authenticate } = require('./middleware/authMiddleware');
+const { HttpError } = require('./error');
+
 const app = express();
 const PORT = 3000;
 
-// const hbs = exphbs.create({
-//   partialsDir: __dirname + '/views/partials'
-
-// })
 const hbs = exphbs.create({
   extname: 'hbs',
-  // defaultLayout: 'base',
   layoutsDir: path.join(__dirname, 'views/layouts'),
   partialsDir: [
-    //  path to your partials
     path.join(__dirname, 'views/partials'),
   ]
 });
-console.log(hbs)
-console.log(hbs.content)
-console.log(hbs.layoutsDir)
-console.log(hbs.hbs)
-// hbs.registerPartials(__dirname + '/views/partials');
+
 app.engine('hbs', hbs.engine);
 app.set('view engine', 'hbs');
 
-app.use(express.static('public'));
+app.use('/public', express.static(path.join(__dirname, 'public')));
+
 app.use(express.urlencoded({ extended: true }));
+
+// app.use(express.bodyParser());
 app.use(session({
-  secret: 'your-secret-key',
+  secret: 'secret-key',
   resave: false,
   saveUninitialized: true,
+  store: new SequelizeStore({
+    db: sequelize
+  })
 }));
 
-app.get('/', (req, res) => {
-  console.log("Root route preccessing")
-  res.render('home', {
-    pageTitle: 'Home',
-    companyTitle: 'Your Company',
-    companyLogo: '/path/to/logo.png',
-    userControls: '<a href="/login">Login</a> | <a href="/signup">Sign Up</a>',
-        content: 'Content for home page...'
-  });
-});
 
-function authenticate(req, res, next) {
-  if (req.session && req.session.user) {
-    // User is authenticated, proceed to the next middleware or route handler
-    return next();
+// app.use((req, res, next) => {
+//   req.session.numberOfVisists = req.session.numberOfVisists + 1 || 1;
+//   res.send("Visits" + req.session.numberOfVisists);
+// })
+
+app.use(require('./middleware/sendHttpError'))
+
+
+app.use('/', adRoutes);
+app.use('/', authRoutes);
+app.use('/', homeRoutes);
+app.use('/', loginRoutes);
+
+
+app.use((err, req, res, next) => {
+  if (typeof err == 'number') {
+    err = new HttpError(err)
+  }
+  if (err instanceof HttpError) {
+    res.sendHttpError(err)
   } else {
-    // User is not authenticated, redirect to login page
-    res.redirect('/login');
+    if (app.get('env') == 'development') {
+      // var errorHandler = express.errorHandler()
+      // errorHandler(err, req, res, next)
+      res.send(err)
+      console.log(err)
+    } else {
+      res.send(500)
+    }
   }
-}
-
-// Apply the authenticate middleware to routes that require authentication
-app.get('/dashboard', authenticate, (req, res) => {
-  res.render('dashboard', {
-    pageTitle: 'Dashboard',
-    // Other dashboard content...
-  });
-});
-
-// Example login route
-app.post('/login', (req, res) => {
-  // Authenticate user (check username/password)
-  const user = { username: 'exampleUser' };
-
-  // Store user information in the session
-  req.session.user = user;
-
-  res.redirect('/dashboard');
-});
-
-app.post('/api/addAd', async (req, res) => {
-  try {
-    const { title, description, category } = req.body;
-
-    console.log(req.body);
-
-    // Create a new Ad using Sequelize model
-    const newAd = await Ad.create({
-      title,
-      description,
-      category,
-      // Add more fields as needed
-    });
-
-    // Perform additional operations here
-
-    // Respond with a success message
-    res.status(200).send('Ad submitted successfully');
-    console.log('status 200');
-  } catch (error) {
-    console.error('Error adding ad to the database:', error.message);
-    res.status(500).send('Internal Server Error');
-  }
-});
+})
 
 
 const initializeApp = async () => {
@@ -129,13 +104,3 @@ const initializeApp = async () => {
 };
 
 initializeApp();
-
-// app.listen(PORT, async () => {
-//   console.log(`Server running on http://localhost:${PORT}`);
-//   try {
-//     await sequelize.authenticate();
-//     console.log('Connection to the database has been established successfully.');
-//   } catch (error) {
-//     console.error('Unable to connect to the database:', error.message);
-//   }
-// });
